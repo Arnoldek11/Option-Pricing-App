@@ -47,6 +47,17 @@ def black_scholes_greeks(S, K, T, r, sigma, option_type='call'):
         "Rho": rho
     }
 
+
+# ----------------------
+# Portfolio Payoff Function
+# ----------------------
+def option_payoff(S, K, option_type='call', quantity=1):
+    if option_type == 'call':
+        return np.maximum(S - K, 0) * quantity
+    else:
+        return np.maximum(K - S, 0) * quantity
+
+
 # ----------------------
 # Sidebar Inputs
 # ----------------------
@@ -258,3 +269,60 @@ fig3d.update_layout(
 )
 
 st.plotly_chart(fig3d, use_container_width=True)
+
+
+# ----------------------
+# Portfolio Simulator
+# ----------------------
+st.markdown("## 💼 Option Portfolio Simulator")
+
+st.markdown("Define your option positions and view the combined payoff at expiry.")
+
+portfolio = []
+
+with st.form("portfolio_form"):
+    cols = st.columns(4)
+    option_type_input = cols[0].selectbox("Type", ["Call", "Put"])
+    direction = cols[1].selectbox("Direction", ["Long", "Short"])
+    strike = cols[2].number_input("Strike Price", value=100.0, step=1.0, key='strike_input')
+    quantity = cols[3].number_input("Quantity", value=1, step=1, key='qty_input')
+
+    submitted = st.form_submit_button("Add to Portfolio")
+    if submitted:
+        portfolio.append({
+            "type": option_type_input.lower(),
+            "direction": direction.lower(),
+            "strike": strike,
+            "quantity": quantity if direction == "Long" else -quantity
+        })
+
+if 'portfolio_data' not in st.session_state:
+    st.session_state.portfolio_data = []
+
+if submitted:
+    st.session_state.portfolio_data.append(portfolio[-1])
+
+if st.session_state.portfolio_data:
+    st.markdown("### 📋 Current Portfolio")
+    st.dataframe(st.session_state.portfolio_data)
+
+    st.markdown("### 💵 Portfolio Payoff at Expiry")
+
+    price_range = np.linspace(0.5 * S, 1.5 * S, 200)
+    total_payoff = np.zeros_like(price_range)
+
+    for opt in st.session_state.portfolio_data:
+        payoff = option_payoff(price_range, opt["strike"], opt["type"], opt["quantity"])
+        total_payoff += payoff
+
+    fig, ax = plt.subplots()
+    ax.plot(price_range, total_payoff, label="Total Payoff", color="#fdea45")
+    ax.axhline(0, color='gray', linestyle='--')
+    ax.set_title("Portfolio Payoff at Expiry")
+    ax.set_xlabel("Underlying Price")
+    ax.set_ylabel("Profit / Loss")
+    ax.grid(True, linestyle='--', alpha=0.3)
+    st.pyplot(fig)
+else:
+    st.info("Add options to build your portfolio.")
+
