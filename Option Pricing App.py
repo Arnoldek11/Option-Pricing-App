@@ -112,7 +112,7 @@ sns.heatmap(call_matrix,
             xticklabels=np.round(spot_range, 1), 
             yticklabels=np.round(vol_range, 2), 
             ax=ax1, 
-            cmap="plasma", 
+            cmap="cividis", 
             cbar_kws={"label": "Call Price"})
 ax1.set_title("Call Price Heatmap", color="white")
 ax1.set_xlabel("Spot Price", color="white")
@@ -125,7 +125,7 @@ sns.heatmap(put_matrix,
             xticklabels=np.round(spot_range, 1), 
             yticklabels=np.round(vol_range, 2), 
             ax=ax2, 
-            cmap="magma", 
+            cmap="cividis", 
             cbar_kws={"label": "Put Price"})
 ax2.set_title("Put Price Heatmap", color="white")
 ax2.set_xlabel("Spot Price", color="white")
