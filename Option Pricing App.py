@@ -174,6 +174,50 @@ ax.legend(frameon=False)
 st.pyplot(fig)
 
 
+import plotly.graph_objects as go
+
+# Dropdown to pick which Greek to visualize
+greek_choice = st.selectbox("🧭 Choose a Greek to Explore in 3D", ["Delta", "Gamma", "Vega"])
+
+# Create a surface of the chosen Greek
+spot_vals = np.linspace(min_spot, max_spot, 30)
+vol_vals = np.linspace(min_vol, max_vol, 30)
+spot_grid, vol_grid = np.meshgrid(spot_vals, vol_vals)
+
+greek_surface = np.zeros_like(spot_grid)
+
+for i in range(len(vol_vals)):
+    for j in range(len(spot_vals)):
+        greeks_here = black_scholes_greeks(spot_grid[i, j], K, T, r, vol_grid[i, j])
+        greek_surface[i, j] = greeks_here[greek_choice]
+
+fig = go.Figure(data=[go.Surface(
+    z=greek_surface,
+    x=spot_grid,
+    y=vol_grid,
+    colorscale='Cividis',
+    colorbar=dict(title=greek_choice)
+)])
+
+fig.update_layout(
+    title=f'{greek_choice} Surface',
+    scene=dict(
+        xaxis_title='Spot Price',
+        yaxis_title='Volatility',
+        zaxis_title=greek_choice,
+        xaxis=dict(backgroundcolor="black", color="white"),
+        yaxis=dict(backgroundcolor="black", color="white"),
+        zaxis=dict(backgroundcolor="black", color="white")
+    ),
+    paper_bgcolor="#111111",
+    plot_bgcolor="#111111",
+    font_color="white",
+    margin=dict(l=0, r=0, b=0, t=40)
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+
 # ----------------------
 # Heatmap Section
 # ----------------------
