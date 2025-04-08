@@ -261,7 +261,7 @@ st.plotly_chart(fig3d, use_container_width=True)
 
 
 # ----------------------
-# Animated Greek Evolution
+# Animated Greek Evolution (Enhanced with Plotly)
 # ----------------------
 st.markdown("## Greek Evolution as Time to Maturity Decreases")
 
@@ -275,11 +275,22 @@ for t in T_values:
     greeks = black_scholes_greeks(S, K, t, r, sigma, option_type.lower())
     values.append(greeks[greek_selected])
 
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(T_values, values, color="#fdea45")
-ax.set_title(f"{greek_selected} vs Time to Maturity", fontsize=14)
-ax.set_xlabel("Time to Maturity (Years)")
-ax.set_ylabel(greek_selected)
-ax.grid(True, linestyle='--', alpha=0.3)
-ax.invert_xaxis()
-st.pyplot(fig)
+fig = go.Figure()
+fig.add_trace(go.Scatter(
+    x=T_values,
+    y=values,
+    mode='lines+markers',
+    line=dict(color='#fdea45', width=2),
+    marker=dict(size=4),
+    name=greek_selected
+))
+fig.update_layout(
+    title=f"{greek_selected} vs Time to Maturity",
+    xaxis_title="Time to Maturity (Years)",
+    yaxis_title=greek_selected,
+    xaxis=dict(autorange="reversed"),
+    template="plotly_dark",
+    height=450,
+    margin=dict(t=40, l=0, r=0, b=0)
+)
+st.plotly_chart(fig, use_container_width=True)
