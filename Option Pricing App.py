@@ -64,11 +64,11 @@ st.markdown("""
     font-size: 48px;
     margin: 0;
     color: #00ffcc;
-    text-shadow: 0 0 10px #00ffcc;
+    text-shadow: 0 0 10px #00FF99;
 }
 .dark-box h1.put {
     color: #ff4477;
-    text-shadow: 0 0 10px #ff4477;
+    text-shadow: 0 0 10px #FF5555;
 }
 .dark-box h3 {
     font-size: 20px;
@@ -111,14 +111,14 @@ for i, v in enumerate(vol_range):
 col1, col2 = st.columns(2)
 
 fig1, ax1 = plt.subplots()
-sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="YlGnBu")
+sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="rocket")
 ax1.set_title("Call Price Heatmap")
 ax1.set_xlabel("Spot Price")
 ax1.set_ylabel("Volatility")
 col1.pyplot(fig1)
 
 fig2, ax2 = plt.subplots()
-sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="YlGnBu")
+sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="rocket")
 ax2.set_title("Put Price Heatmap")
 ax2.set_xlabel("Spot Price")
 ax2.set_ylabel("Volatility")
