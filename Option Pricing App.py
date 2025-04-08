@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm
 
-st.set_page_config(page_title="Black-Scholes Model", page_icon="📊", layout="wide")
-st.title("\U0001F4CA Black-Scholes Pricing Model")
+st.set_page_config(page_title="Black-Scholes Model", layout="wide")
+st.title("Black-Scholes Pricing Model")
 
 # ----------------------
 # Black-Scholes Function
@@ -47,20 +47,34 @@ st.dataframe([data])
 call_price = black_scholes(S, K, T, r, sigma, 'call')
 put_price = black_scholes(S, K, T, r, sigma, 'put')
 
-col1, col2 = st.columns(2)
-col1.markdown("""
-<div style='background-color:#b2fab4;padding:20px;border-radius:10px;text-align:center;'>
-    <h3>CALL Value</h3>
-    <h1 style='color:green;'>${:.2f}</h1>
-</div>
-""".format(call_price), unsafe_allow_html=True)
+# ----------------------
+# Display Call and Put Prices - Dark Box Style
+# ----------------------
+st.markdown("""
+<style>
+.dark-box {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+}
+.dark-box h1 {
+    font-size: 48px;
+    margin: 0;
+}
+.dark-box h3 {
+    font-size: 24px;
+    margin: 0;
+    opacity: 0.8;
+}
+</style>
+""", unsafe_allow_html=True)
 
-col2.markdown("""
-<div style='background-color:#ffcdd2;padding:20px;border-radius:10px;text-align:center;'>
-    <h3>PUT Value</h3>
-    <h1 style='color:red;'>${:.2f}</h1>
-</div>
-""".format(put_price), unsafe_allow_html=True)
+col1, col2 = st.columns(2)
+col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1 style='color:#00FF99;'>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
+col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 style='color:#FF5555;'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
 
 # ----------------------
 # Heatmap Section
