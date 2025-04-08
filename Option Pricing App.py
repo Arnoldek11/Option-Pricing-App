@@ -19,6 +19,30 @@ def black_scholes(S, K, T, r, sigma, option_type='call'):
     elif option_type == 'put':
         return K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1)
 
+def black_scholes_greeks(S, K, T, r, sigma, option_type='call'):
+    d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+
+    delta = norm.cdf(d1) if option_type == 'call' else norm.cdf(d1) - 1
+    gamma = norm.pdf(d1) / (S * sigma * np.sqrt(T))
+    vega = S * norm.pdf(d1) * np.sqrt(T) / 100  # per 1% change
+    theta_call = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) - r * K * np.exp(-r * T) * norm.cdf(d2)) / 365
+    theta_put = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) + r * K * np.exp(-r * T) * norm.cdf(-d2)) / 365
+    rho_call = K * T * np.exp(-r * T) * norm.cdf(d2) / 100
+    rho_put = -K * T * np.exp(-r * T) * norm.cdf(-d2) / 100
+
+    theta = theta_call if option_type == 'call' else theta_put
+    rho = rho_call if option_type == 'call' else rho_put
+
+    return {
+        "Delta": delta,
+        "Gamma": gamma,
+        "Vega": vega,
+        "Theta": theta,
+        "Rho": rho
+    }
+
+
 # ----------------------
 # Sidebar Inputs
 # ----------------------
@@ -81,6 +105,22 @@ col1, col2 = st.columns(2)
 col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
 col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 class='put'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
 
+call_greeks = black_scholes_greeks(S, K, T, r, sigma, 'call')
+put_greeks = black_scholes_greeks(S, K, T, r, sigma, 'put')
+
+st.markdown("### Option Greeks")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("#### 📈 Call Option Greeks")
+    for g, val in call_greeks.items():
+        st.write(f"**{g}**: {val:.4f}")
+
+with col2:
+    st.markdown("#### 📉 Put Option Greeks")
+    for g, val in put_greeks.items():
+        st.write(f"**{g}**: {val:.4f}")
 
 
 # ----------------------
