@@ -105,22 +105,73 @@ col1, col2 = st.columns(2)
 col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
 col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 class='put'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
 
+# ----------------------
+# Option Greeks with Style
+# ----------------------
 call_greeks = black_scholes_greeks(S, K, T, r, sigma, 'call')
 put_greeks = black_scholes_greeks(S, K, T, r, sigma, 'put')
 
-st.markdown("### Option Greeks")
+# Custom card styles
+st.markdown("""
+<style>
+.greeks-box {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 15px;
+    color: #e0e0e0;
+    border: 1px solid #2a2a2a;
+    margin-bottom: 10px;
+}
+.greeks-box h4 {
+    margin-bottom: 10px;
+    color: #fdea45;
+}
+.greeks-box.put h4 {
+    color: #93d7c0;
+}
+</style>
+""", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("#### 📈 Call Option Greeks")
+    st.markdown("<div class='greeks-box'><h4>Call Option Greeks</h4>", unsafe_allow_html=True)
     for g, val in call_greeks.items():
-        st.write(f"**{g}**: {val:.4f}")
+        st.markdown(f"**{g}**: {val:.4f}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
-    st.markdown("#### 📉 Put Option Greeks")
+    st.markdown("<div class='greeks-box put'><h4>Put Option Greeks</h4>", unsafe_allow_html=True)
     for g, val in put_greeks.items():
-        st.write(f"**{g}**: {val:.4f}")
+        st.markdown(f"**{g}**: {val:.4f}")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ----------------------
+# Greek Bars with Seaborn
+# ----------------------
+import pandas as pd
+
+st.markdown("### Visual Comparison of Option Greeks")
+
+greek_names = list(call_greeks.keys())
+
+greek_df = pd.DataFrame({
+    "Greek": greek_names,
+    "Call Option": [call_greeks[g] for g in greek_names],
+    "Put Option": [put_greeks[g] for g in greek_names]
+})
+
+# Melt for seaborn
+greek_melted = greek_df.melt(id_vars="Greek", var_name="Type", value_name="Value")
+
+fig, ax = plt.subplots(figsize=(10, 4), facecolor='#0e0e0e')
+sns.barplot(data=greek_melted, x="Greek", y="Value", hue="Type", palette=["#fdea45", "#93d7c0"], ax=ax)
+ax.set_title("Option Greeks", color="white")
+ax.tick_params(colors='lightgray')
+ax.set_xlabel("", color="white")
+ax.set_ylabel("Value", color="white")
+ax.legend(frameon=False)
+st.pyplot(fig)
 
 
 # ----------------------
