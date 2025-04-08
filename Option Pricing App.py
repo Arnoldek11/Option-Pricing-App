@@ -53,35 +53,28 @@ put_price = black_scholes(S, K, T, r, sigma, 'put')
 st.markdown("""
 <style>
 .dark-box {
-    background-color: #111111;
-    padding: 25px;
-    border-radius: 15px;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
     text-align: center;
-    color: #e0e0e0;
-    box-shadow: 0 0 20px rgba(0, 255, 160, 0.15);
+    color: white;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
 }
 .dark-box h1 {
     font-size: 48px;
     margin: 0;
-    color: #00ffcc;
-    text-shadow: 0 0 10px #00FF99;
-}
-.dark-box h1.put {
-    color: #ff4477;
-    text-shadow: 0 0 10px #FF5555;
 }
 .dark-box h3 {
-    font-size: 20px;
+    font-size: 24px;
     margin: 0;
-    opacity: 0.7;
-    letter-spacing: 1px;
+    opacity: 0.8;
 }
 </style>
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
-col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
-col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 class='put'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
+col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1 style='color:#00FF99;'>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
+col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 style='color:#FF5555;'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
 
 
 # ----------------------
@@ -111,14 +104,14 @@ for i, v in enumerate(vol_range):
 col1, col2 = st.columns(2)
 
 fig1, ax1 = plt.subplots()
-sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="rocket")
+sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="YlGnBu")
 ax1.set_title("Call Price Heatmap")
 ax1.set_xlabel("Spot Price")
 ax1.set_ylabel("Volatility")
 col1.pyplot(fig1)
 
 fig2, ax2 = plt.subplots()
-sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="rocket")
+sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="YlGnBu")
 ax2.set_title("Put Price Heatmap")
 ax2.set_xlabel("Spot Price")
 ax2.set_ylabel("Volatility")
