@@ -53,28 +53,26 @@ put_price = black_scholes(S, K, T, r, sigma, 'put')
 st.markdown("""
 <style>
 .dark-box {
-    background-color: #111111;
+    background-color: #1a1a1a;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
     color: #e0e0e0;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    border: 1px solid #2a2a2a;
 }
 .dark-box h1 {
-    font-size: 48px;
+    font-size: 42px;
     margin: 0;
-    color: #fdea45;
-    text-shadow: 0 0 10px #fdea45;
+    color: #fdea45; /* cividis yellow */
 }
 .dark-box h1.put {
-    color: #93d7c0;
-    text-shadow: 0 0 10px #93d7c0;
+    color: #93d7c0; /* cividis green-blue */
 }
 .dark-box h3 {
     font-size: 20px;
-    margin: 0;
-    opacity: 0.7;
-    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    opacity: 0.8;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -82,6 +80,7 @@ st.markdown("""
 col1, col2 = st.columns(2)
 col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1>${call_price:.2f}</h1></div>", unsafe_allow_html=True)
 col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 class='put'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
+
 
 
 # ----------------------
