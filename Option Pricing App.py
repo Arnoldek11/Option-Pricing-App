@@ -103,16 +103,33 @@ for i, v in enumerate(vol_range):
 
 col1, col2 = st.columns(2)
 
-fig1, ax1 = plt.subplots()
-sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="YlGnBu")
-ax1.set_title("Call Price Heatmap")
-ax1.set_xlabel("Spot Price")
-ax1.set_ylabel("Volatility")
+# Set dark theme for matplotlib
+plt.style.use("dark_background")
+
+# Custom dark figure settings
+fig1, ax1 = plt.subplots(facecolor="#0e0e0e")
+sns.heatmap(call_matrix, 
+            xticklabels=np.round(spot_range, 1), 
+            yticklabels=np.round(vol_range, 2), 
+            ax=ax1, 
+            cmap="plasma", 
+            cbar_kws={"label": "Call Price"})
+ax1.set_title("Call Price Heatmap", color="white")
+ax1.set_xlabel("Spot Price", color="white")
+ax1.set_ylabel("Volatility", color="white")
+ax1.tick_params(colors='lightgray')
 col1.pyplot(fig1)
 
-fig2, ax2 = plt.subplots()
-sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="YlGnBu")
-ax2.set_title("Put Price Heatmap")
-ax2.set_xlabel("Spot Price")
-ax2.set_ylabel("Volatility")
+fig2, ax2 = plt.subplots(facecolor="#0e0e0e")
+sns.heatmap(put_matrix, 
+            xticklabels=np.round(spot_range, 1), 
+            yticklabels=np.round(vol_range, 2), 
+            ax=ax2, 
+            cmap="magma", 
+            cbar_kws={"label": "Put Price"})
+ax2.set_title("Put Price Heatmap", color="white")
+ax2.set_xlabel("Spot Price", color="white")
+ax2.set_ylabel("Volatility", color="white")
+ax2.tick_params(colors='lightgray')
 col2.pyplot(fig2)
+
