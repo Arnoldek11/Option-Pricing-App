@@ -110,8 +110,52 @@ col1.markdown(f"<div class='dark-box'><h3>Call Option</h3><h1>${call_price:.2f}<
 col2.markdown(f"<div class='dark-box'><h3>Put Option</h3><h1 class='put'>${put_price:.2f}</h1></div>", unsafe_allow_html=True)
 
 # ----------------------
-# Greeks Styled Display
+# Heatmap Controls
 # ----------------------
+st.markdown("### Options Price - Interactive Heatmap")
+st.info("Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters.")
+
+st.sidebar.header("Heatmap Parameters")
+min_spot = st.sidebar.number_input("Min Spot Price", value=80.0, step=1.0)
+max_spot = st.sidebar.number_input("Max Spot Price", value=120.0, step=1.0)
+min_vol = st.sidebar.slider("Min Volatility for Heatmap", 0.01, 1.0, 0.1, step=0.01)
+max_vol = st.sidebar.slider("Max Volatility for Heatmap", 0.01, 1.0, 0.5, step=0.01)
+
+spot_range = np.linspace(min_spot, max_spot, 20)
+vol_range = np.linspace(min_vol, max_vol, 20)
+
+call_matrix = np.zeros((len(vol_range), len(spot_range)))
+put_matrix = np.zeros((len(vol_range), len(spot_range)))
+
+for i, v in enumerate(vol_range):
+    for j, s in enumerate(spot_range):
+        call_matrix[i, j] = black_scholes(s, K, T, r, v, 'call')
+        put_matrix[i, j] = black_scholes(s, K, T, r, v, 'put')
+
+col1, col2 = st.columns(2)
+
+plt.style.use("dark_background")
+fig1, ax1 = plt.subplots(facecolor="#0e0e0e")
+sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="cividis", cbar_kws={"label": "Call Price"})
+ax1.set_title("Call Price Heatmap", color="white")
+ax1.set_xlabel("Spot Price", color="white")
+ax1.set_ylabel("Volatility", color="white")
+ax1.tick_params(colors='lightgray')
+col1.pyplot(fig1)
+
+fig2, ax2 = plt.subplots(facecolor="#0e0e0e")
+sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="cividis", cbar_kws={"label": "Put Price"})
+ax2.set_title("Put Price Heatmap", color="white")
+ax2.set_xlabel("Spot Price", color="white")
+ax2.set_ylabel("Volatility", color="white")
+ax2.tick_params(colors='lightgray')
+col2.pyplot(fig2)
+
+# ----------------------
+# Greeks Section
+# ----------------------
+st.markdown("## Option Greeks")
+
 call_greeks = black_scholes_greeks(S, K, T, r, sigma, 'call')
 put_greeks = black_scholes_greeks(S, K, T, r, sigma, 'put')
 
@@ -137,13 +181,13 @@ st.markdown("""
 
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown("<div class='greeks-box'><h4>📈 Call Option Greeks</h4>", unsafe_allow_html=True)
+    st.markdown("<div class='greeks-box'><h4>Call Option Greeks</h4>", unsafe_allow_html=True)
     for g, val in call_greeks.items():
         st.markdown(f"**{g}**: {val:.4f}")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
-    st.markdown("<div class='greeks-box put'><h4>📉 Put Option Greeks</h4>", unsafe_allow_html=True)
+    st.markdown("<div class='greeks-box put'><h4>Put Option Greeks</h4>", unsafe_allow_html=True)
     for g, val in put_greeks.items():
         st.markdown(f"**{g}**: {val:.4f}")
     st.markdown("</div>", unsafe_allow_html=True)
@@ -172,21 +216,11 @@ ax.legend(frameon=False)
 st.pyplot(fig)
 
 # ----------------------
-# Heatmap Controls
-# ----------------------
-st.markdown("### Options Price - Interactive Heatmap")
-st.info("Explore how option prices fluctuate with varying 'Spot Prices and Volatility' levels using interactive heatmap parameters.")
-
-st.sidebar.header("Heatmap Parameters")
-min_spot = st.sidebar.number_input("Min Spot Price", value=80.0, step=1.0)
-max_spot = st.sidebar.number_input("Max Spot Price", value=120.0, step=1.0)
-min_vol = st.sidebar.slider("Min Volatility for Heatmap", 0.01, 1.0, 0.1, step=0.01)
-max_vol = st.sidebar.slider("Max Volatility for Heatmap", 0.01, 1.0, 0.5, step=0.01)
-
-# ----------------------
 # 3D Surface of a Greek
 # ----------------------
-greek_choice = st.selectbox("🧭 Choose a Greek to Explore in 3D", ["Delta", "Gamma", "Vega"])
+st.markdown("### 3D Visualization of a Greek")
+greek_choice = st.selectbox("Choose a Greek to Explore in 3D", ["Delta", "Gamma", "Vega"])
+st.subheader(f"{greek_choice} Surface Visualization")
 
 spot_vals = np.linspace(min_spot, max_spot, 30)
 vol_vals = np.linspace(min_vol, max_vol, 30)
@@ -224,36 +258,3 @@ fig3d.update_layout(
 )
 
 st.plotly_chart(fig3d, use_container_width=True)
-
-# ----------------------
-# Heatmap Section
-# ----------------------
-spot_range = np.linspace(min_spot, max_spot, 20)
-vol_range = np.linspace(min_vol, max_vol, 20)
-
-call_matrix = np.zeros((len(vol_range), len(spot_range)))
-put_matrix = np.zeros((len(vol_range), len(spot_range)))
-
-for i, v in enumerate(vol_range):
-    for j, s in enumerate(spot_range):
-        call_matrix[i, j] = black_scholes(s, K, T, r, v, 'call')
-        put_matrix[i, j] = black_scholes(s, K, T, r, v, 'put')
-
-col1, col2 = st.columns(2)
-
-plt.style.use("dark_background")
-fig1, ax1 = plt.subplots(facecolor="#0e0e0e")
-sns.heatmap(call_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax1, cmap="cividis", cbar_kws={"label": "Call Price"})
-ax1.set_title("Call Price Heatmap", color="white")
-ax1.set_xlabel("Spot Price", color="white")
-ax1.set_ylabel("Volatility", color="white")
-ax1.tick_params(colors='lightgray')
-col1.pyplot(fig1)
-
-fig2, ax2 = plt.subplots(facecolor="#0e0e0e")
-sns.heatmap(put_matrix, xticklabels=np.round(spot_range, 1), yticklabels=np.round(vol_range, 2), ax=ax2, cmap="cividis", cbar_kws={"label": "Put Price"})
-ax2.set_title("Put Price Heatmap", color="white")
-ax2.set_xlabel("Spot Price", color="white")
-ax2.set_ylabel("Volatility", color="white")
-ax2.tick_params(colors='lightgray')
-col2.pyplot(fig2)
